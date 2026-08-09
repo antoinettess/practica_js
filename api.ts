@@ -1,14 +1,19 @@
- async function loadData(url, containerId){
-    const container = document.getElementById(containerId)
+interface apiItem{
+    id: number
+    name: string
+    title: string
+}
+
+async function loadData(url: string, containerId: string): Promise<void> {
+    const container = document.getElementById(containerId) as HTMLDivElement
     container.innerHTML = '<p style="color: #95066e;"> Загрузка...</p>'
     try{
         const response = await fetch(url)
         if(!response.ok){
             throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const data = await response.json()
-        const limited = data.slice(0, 10)
-        const container = document.getElementById(containerId)
+        const data: apiItem[] = await response.json()
+        const limited: apiItem[] = data.slice(0, 10)
         container.innerHTML = ''
 
         for(let i = 0; i < limited.length; i++){
@@ -20,9 +25,10 @@
         }
         console.log(`Данные загружены из: ${url}`)
     
-    } catch(error){
-        console.error(`Ошибка при загрузке данных из ${url}:`, error.message)
-        container.innerHTML = `<p style="color: red;"> Ошибка: ${error.message}</p>`;
+    } catch(error: unknown){
+        const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка'
+        console.error(`Ошибка при загрузке данных из ${url}:`, errorMessage)
+        container.innerHTML = `<p style="color: red;"> Ошибка: ${errorMessage}</p>`;
     }
  }
     
