@@ -1,6 +1,11 @@
 "use strict";
+const API_URL = 'https://jsonplaceholder.typicode.com';
 async function loadData(url, containerId) {
     const container = document.getElementById(containerId);
+    if (!container) {
+        console.log(`Контейнер ${containerId} не найден`);
+        return;
+    }
     container.innerHTML = '<p style="color: #95066e;"> Загрузка...</p>';
     try {
         const response = await fetch(url);
@@ -12,9 +17,10 @@ async function loadData(url, containerId) {
         container.innerHTML = '';
         for (let i = 0; i < limited.length; i++) {
             const item = limited[i];
+            const displayName = item.name || item.title || 'Без названия';
             container.innerHTML +=
                 `<div class="api-item">
-                    <strong>${item.id}. ${item.name || item.title}</strong>
+                    <strong>${item.id}. ${displayName}</strong>
                 </div>`;
         }
         console.log(`Данные загружены из: ${url}`);
@@ -25,6 +31,6 @@ async function loadData(url, containerId) {
         container.innerHTML = `<p style="color: red;"> Ошибка: ${errorMessage}</p>`;
     }
 }
-loadData('https://jsonplaceholder.typicode.com/users', 'usersList');
-loadData('https://jsonplaceholder.typicode.com/posts', 'postsList');
-loadData('https://jsonplaceholder.typicode.com/albums', 'albumsList');
+loadData(`${API_URL}/users`, 'usersList');
+loadData(`${API_URL}/posts`, 'postsList');
+loadData(`${API_URL}/albums`, 'albumsList');
