@@ -360,9 +360,9 @@ if(!searchBtn){
         <h2>🔍 Поиск контактов</h2>
         <input type="text" id="searchInput" placeholder="Введите имя, должность или телефон...">
         <div class="btn-group">
-            <button class="btn-secondary" onclick="closeModal()">Закрыть</button>
-            <button class="btn-primary" onclick="searchContacts()">Найти</button>
-            <button class="btn-secondary" onclick="resetSearch()">Сбросить</button>
+            <button class="btn-secondary" id="closeModalBtn">Закрыть</button>
+            <button class="btn-primary" id="findsearchBtn">Найти</button>
+            <button class="btn-secondary" id="resetsearchBtn">Сбросить</button>
         </div>
         <div id="searchResults" class="search-results"></div>
     `;
@@ -419,13 +419,35 @@ function searchContacts(): void {
     
     for (let i = 0; i < results.length; i++) {
         const contact = results[i];
-        container.innerHTML += `
-            <div class="result-item">
-                <span class="result-name">${contact.name}</span>
-                <span>${contact.job}</span>
-                <span>${contact.phone}</span>
-            </div>
-        `;
+
+        const card = document.createElement('div')
+        card.className = 'result-item'
+
+        const info = document.createElement('div')
+        info.className = 'result-info'
+        info.textContent = `${contact.name} | ${contact.job} | ${contact.phone}`
+
+        const deleteBtn = document.createElement('button')
+        deleteBtn.textContent = '🗑️'
+        deleteBtn.className = 'result-delete-btn'
+        deleteBtn.addEventListener('click', () => {
+            deleteContact(contact.id)
+            closeModal()
+        })
+
+        const editBtn = document.createElement('button')
+        editBtn.textContent = '✏️'
+        editBtn.className = 'result-edit-btn'
+        editBtn.addEventListener('click', () => {
+            editContact(contact.id)
+           closeModal()
+        })
+
+        card.appendChild(info)
+        card.appendChild(editBtn)
+        card.appendChild(deleteBtn)
+        container.appendChild(card)
+
     }
 }
 

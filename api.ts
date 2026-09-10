@@ -19,9 +19,11 @@ interface Album{
     userId?: number
 }
 
-type ApiResponse = User[] | Post[] | Album[]
-
-async function loadData<T>(url: string, containerId: string): Promise<void> {
+async function loadData<T>(
+    url: string, 
+    containerId: string, 
+     getDisplayName: (item: T) => string
+    ): Promise<void> {
     const container = document.getElementById(containerId) as HTMLDivElement
 
     if(!container){
@@ -42,11 +44,12 @@ async function loadData<T>(url: string, containerId: string): Promise<void> {
         container.innerHTML = ''
 
         for(let i = 0; i < limited.length; i++){
-            const item = limited[i] as any
-            const displayName = item.name || item.title || 'Без названия'
+            const item = limited[i] 
+            const displayName = getDisplayName(item)
+            const itemId = (item as {id: number}).id
             container.innerHTML += 
             `<div class="api-item">
-                    <strong>${item.id}. ${displayName}</strong>
+                    <strong>${itemId}. ${displayName}</strong>
                 </div>`
         }
         console.log(`Данные загружены из: ${url}`)
@@ -59,6 +62,6 @@ async function loadData<T>(url: string, containerId: string): Promise<void> {
  }
     
 
-loadData<User>(`${API_URL}/users`, 'usersList');
-loadData<Post>(`${API_URL}/posts`, 'postsList');
-loadData<Album>(`${API_URL}/albums`, 'albumsList');
+loadData<User>(`${API_URL}/users`, 'usersList', (user: User) => user.name);
+loadData<Post>(`${API_URL}/posts`, 'postsList' , (post: Post) => post.title);
+loadData<Album>(`${API_URL}/albums`, 'albumsList', (album: Album) => album.title);
